@@ -179,5 +179,19 @@ https://github.com/ZeroCho/react-nodebird/tree/master/toolkit
 # 로딩을 없애는 이유로 서버사이드 렌더링 하는 게 좋음
 ## 서버에서 각 페이지 및 데이터를 캐싱할 수 있음 -> 매번 렌더링 하는 것이 아님
 
->> 1-9
+>> 2-1
+# 명령어 목록
+- npm i antd styled-components @ant-design/icons
+
+>> 2-3
+# 데스크랍을 먼저하면 브레이크포인트 설정이 골때려짐
+
+# 가로->세로, 모바일->태블릿->데스크탑
+
+# xs: 모바일, sm: 태블릿, md: 작은 데스크탑
+## n/24등분
+
+# 일부러 특정 공간을 띄우는 offset 컬럼도 있으니 찾아보세요. (https://ant.design/components/grid)
+
+# gutter라는 게 요소(행) 간의 간격
 
