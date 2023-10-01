@@ -195,3 +195,11 @@ https://github.com/ZeroCho/react-nodebird/tree/master/toolkit
 
 # gutter라는 게 요소(행) 간의 간격
 
+>> 2-4
+# components 대신 presenters라고도 불림
+
+>> 2-5
+# 성능에 영향이 크게 없다면 , 인라인 스타일로 해도 됨 -> 너무 집착할 필요 없음
+
+>> 2-6
+# Form에서 onFinish를 할 때, e.preventDefault가 자동으로 적용되어 았음
