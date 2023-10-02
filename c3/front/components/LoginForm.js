@@ -4,7 +4,7 @@ import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
 import useInput from "../hooks/useInput";
-import { loginAction } from "../reducers";
+import { loginAction } from "../reducers/user";
 import {useDispatch} from "react-redux";
 
 const ButtonWrapper = styled.div`
@@ -12,7 +12,7 @@ const ButtonWrapper = styled.div`
 `;
 
 const FormWrapper = styled(Form)`
-    padding: 10px;
+  padding: 10px;
 `;
 
 // styled component 사용이 싫은 경우
@@ -20,8 +20,8 @@ const FormWrapper = styled(Form)`
 // <div style={style} />
 const LoginForm = () => {
     const dispatch = useDispatch();
-    const [id, onChangeId] = useInput('');
-    const [password, onChangePassword] = useInput('');
+    const [id, onChangeId] = useInput('zerocho@gmail.com');
+    const [password, onChangePassword] = useInput('123123');
 
     const onSubmitForm = useCallback(() => {
         console.log(id, password);
@@ -49,7 +49,7 @@ const LoginForm = () => {
                 </div>
                <ButtonWrapper>
                     <Button type="primary" htmlType="submit" loading={false}>로그인</Button>
-                    <Link href="/signup"><a><button>회원가입</button></a></Link>
+                    <Link href="/signup"><a><Button>회원가입</Button></a></Link>
                 </ButtonWrapper>
             </FormWrapper>
         </>
