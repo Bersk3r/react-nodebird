@@ -16,7 +16,7 @@ const PostForm = () => {
         setText('');
     },[]);
     const onClickImageUpload = useCallback(() => {
-        imageInput.current.click();
+        imageInput.current.click(); // 포커싱
     },[imageInput.current]);
     return (
         <Form style={{ margin: '10px 0 20px'}} encType="multipart/form-data" onFinish={onSubmit} >
