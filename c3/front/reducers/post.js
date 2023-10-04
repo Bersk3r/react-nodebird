@@ -2,7 +2,7 @@ export const initialState = {
     mainPosts: [{
         id: 1,
         User: {
-            id: 'wook'
+            nickname: 'Wook'
         },
         content: '첫 번째 게시글 #해시태그 #익스프레스',
         Images: [{
