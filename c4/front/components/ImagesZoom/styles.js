@@ -1,5 +1,18 @@
-import styled, {createGlobalStyle} from "styled-components";
-import {CloseOutlined} from "@ant-design/icons";
+import styled, { createGlobalStyle } from 'styled-components';
+import { CloseOutlined } from '@ant-design/icons';
+
+export const Global = createGlobalStyle`
+    .slick-slide {
+      display: inline-block; 
+    }
+
+    // antd 최신 버전 내 버그가 존재
+    // transform -> fixed가 들어가면 이를 제대로 적용하지 못하는 브라우저 버그가 존재
+    // 이에 대한 대응이 하기의 설정
+    //.ant-card-cover {
+    //  transform: none !important;
+    //}
+`;
 
 export const Overlay = styled.div`
   position: fixed;
@@ -65,15 +78,3 @@ export const ImgWrapper = styled.div`
     max-height: 750px;
   }
 `
-export const Global = createGlobalStyle`
-    .slick-slide {
-      display: inline-block; 
-    }
-
-    // antd 최신 버전 내 버그가 존재
-    // transform -> fixed가 들어가면 이를 제대로 적용하지 못하는 브라우저 버그가 존재
-    // 이에 대한 대응이 하기의 설정
-    //.ant-card-cover {
-    //  transform: none !important;
-    //}
-`;

@@ -2,7 +2,7 @@ import { HYDRATE } from "next-redux-wrapper";
 
 import user from './user';
 import post from './post';
-import {combineReducers} from "redux";
+import { combineReducers } from "redux";
 
 // const initialState = {
 //     name: 'zerocho',
@@ -30,7 +30,7 @@ const rootReducer = combineReducers( {
                 return {
                     ...state,
                     ...action.payload,
-                }
+                };
 
             default:
                 return state;

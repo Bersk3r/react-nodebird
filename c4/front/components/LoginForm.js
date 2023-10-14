@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 // import React, { useState, useCallback, useMemo } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
@@ -20,27 +20,36 @@ const FormWrapper = styled(Form)`
 // <div style={style} />
 const LoginForm = () => {
     const dispatch = useDispatch();
-    const { isLoggingIn } = useSelector((state) => state.user);
-    const [id, onChangeId] = useInput('zerocho@gmail.com');
+    const { logInLoading } = useSelector((state) => state.user);
+
+    const emailRef = useRef();
+    const pwRef = useRef();
+
+
+    const [email, onChangeEmail] = useInput('zerocho@gmail.com');
     const [password, onChangePassword] = useInput('123123');
 
     const onSubmitForm = useCallback(() => {
-        console.log(id, password);
-        dispatch(loginRequestAction({id, password}));
-    }, [id, password]);
+        emailRef.current.focus();
+        pwRef.current.focus();
+
+        console.log(email, password);
+        dispatch(loginRequestAction({email, password}));
+    }, [email, password]);
 
     return (
         <>
             <FormWrapper onFinish={onSubmitForm}>
                 <div>
-                    <label htmlFor="user-id">아이디</label>
+                    <label htmlFor="user-email">이메일</label>
                     <br />
-                    <Input name="user-id" value={id} onChange={onChangeId} required />
+                    <Input ref={emailRef} name="user-email" type="email" value={email} onChange={onChangeEmail} required />
                 </div>
                 <div>
                     <label htmlFor="user-password">비밀번호</label>
                     <br />
                     <Input
+                        ref={pwRef}
                         name="user-password"
                         type="password"
                         value={password}
@@ -49,7 +58,7 @@ const LoginForm = () => {
                     />
                 </div>
                <ButtonWrapper>
-                    <Button type="primary" htmlType="submit" loading={isLoggingIn}>로그인</Button>
+                    <Button type="primary" htmlType="submit" loading={logInLoading}>로그인</Button>
                     <Link href="/signup"><a><Button>회원가입</Button></a></Link>
                 </ButtonWrapper>
             </FormWrapper>

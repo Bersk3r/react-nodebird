@@ -25,10 +25,10 @@ const configureStore = () => {
         : composeWithDevTools(applyMiddleware(...middlewares));
     const store = createStore(reducer, enhancer);
     store.sagaTask = sagaMiddleware.run(rootSaga);
-    store.dispatch({
-        type: 'CHANGE_ACTION',
-        data: 'boogicho',
-    })
+    // store.dispatch({
+    //     type: 'CHANGE_ACTION',
+    //     data: 'boogicho',
+    // })
     return store;
 };
 
