@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
+import Router from 'next/router';
 import AppLayout from "../components/AppLayout";
 import { Form, Input, Checkbox, Button } from 'antd';
 import useInput from "../hooks/useInput";
@@ -12,7 +13,27 @@ const ErrorMessage = styled.div`
 `;
 const Signup = () => {
     const dispatch = useDispatch();
-    const { signUpLoading } = useSelector((state) => state.user );
+    const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user );
+
+    useEffect(() => {
+        if (me && me.id) {
+            // Router.push('/');
+            // push는 뒤로 가기 했을 때, 이전 페이지가 나타나지만 replace는 나타나지 않음
+            Router.replace('/');
+        }
+    }, [me && me.id]);
+
+    useEffect(() => {
+        if (signUpDone) {
+            Router.replace('/');
+        }
+    }, [signUpDone]);
+
+    useEffect(() => {
+        if (signUpError) {
+            alert(signUpError);
+        }
+    }, [signUpError]);
 
     const [email, onChangeEmail] = useInput('');
     const [nickname, onChangeNickname] = useInput('');

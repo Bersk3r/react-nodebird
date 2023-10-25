@@ -52,14 +52,14 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
-const dummyUser = (data) => ({
-    ...data,
-    nickname: 'Wook',
-    id: 1,
-    Posts: [ {id: 1}, ],
-    Followings: [{ nickname: '오스카'},{ nickname: '앨리스'},{ nickname: '밥'}],
-    Followers: [{ nickname: '오스카'},{ nickname: '앨리스'},{ nickname: '밥'}],
-});
+// const dummyUser = (data) => ({
+//     ...data,
+//     nickname: 'Wook',
+//     id: 1,
+//     Posts: [ {id: 1}, ],
+//     Followings: [{ nickname: '오스카'},{ nickname: '앨리스'},{ nickname: '밥'}],
+//     Followers: [{ nickname: '오스카'},{ nickname: '앨리스'},{ nickname: '밥'}],
+// });
 
 // export const loginAction = (data) => {
 //     return (dispatch, getState) => {

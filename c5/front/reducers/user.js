@@ -113,7 +113,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
             break;
 
         case FOLLOW_FAILURE:
-            draft.followLoading = true;
+            draft.followLoading = false;
             draft.followError = action.error;
             break;
 
@@ -130,7 +130,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
             break;
 
         case UNFOLLOW_FAILURE:
-            draft.unfollowLoading = true;
+            draft.unfollowLoading = false;
             draft.unfollowError = action.error;
             break;
 
@@ -143,11 +143,11 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
         case LOG_IN_SUCCESS:
             draft.logInLoading = false;
             draft.logInDone = true;
-            draft.me = dummyUser(action.data);
+            draft.me = action.data;
             break;
 
         case LOG_IN_FAILURE:
-            draft.logInLoading = true;
+            draft.logInLoading = false;
             draft.logInError = action.error;
             break;
 

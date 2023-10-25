@@ -202,4 +202,21 @@ https://github.com/ZeroCho/react-nodebird/tree/master/toolkit
 # 성능에 영향이 크게 없다면 , 인라인 스타일로 해도 됨 -> 너무 집착할 필요 없음
 
 >> 2-6
-# Form에서 onFinish를 할 때, e.preventDefault가 자동으로 적용되어 았음
+# Form에서 onFinish를 할 때, e.preventDefault가 자동으로 적용되어 있음
+
+>> 2-7
+# noreferer와 noopener는 붙여야 함 -> 새 창에서 열었을 때, 어떤 창에 열었는지 그 정보가 전송된다고 함
+## referer가 이전 페이지, opener가 누가 나를 열었는지
+## 두 개를 활용하면 보안에 위협되는 행동이 가능할 수 있음
+
+# 리렌더링 자체가 성능에 영향을 반드시 주는 게 아님, 실제로 달라지는 것이 없으면 화면을 다시 그리지는 않음
+## 다만 리렌더링 자체가 함수를 다시 실행되므로, 시간 소요가 발생될 수 있음 -> 되도록 덜 발생하도록 조절을 해야함
+
+# antd, echart, vue
+
+# containers, components(presenters) -> 클래스를 쓸 때는 그렇게 해야 함
+
+>> 2-8
+
+
+>> 3-1

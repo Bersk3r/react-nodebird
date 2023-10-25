@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 // import React, { useState, useCallback, useMemo } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
@@ -20,6 +20,7 @@ const FormWrapper = styled(Form)`
 // <div style={style} />
 const LoginForm = () => {
     const dispatch = useDispatch();
+
     const [id, onChangeId] = useInput('zerocho@gmail.com');
     const [password, onChangePassword] = useInput('123123');
 
@@ -28,18 +29,20 @@ const LoginForm = () => {
         dispatch(loginAction({id, password}));
     }, [id, password]);
 
+    ref.current.
     return (
         <>
             <FormWrapper onFinish={onSubmitForm}>
                 <div>
                     <label htmlFor="user-id">아이디</label>
                     <br />
-                    <Input name="user-id" value={id} onChange={onChangeId} required />
+                    <Input ref = {idRef} name="user-id" value={id} onChange={onChangeId} required />
                 </div>
                 <div>
                     <label htmlFor="user-password">비밀번호</label>
                     <br />
                     <Input
+                        ref = {pwRef}
                         name="user-password"
                         type="password"
                         value={password}
