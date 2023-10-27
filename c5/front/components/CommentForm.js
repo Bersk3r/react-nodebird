@@ -3,7 +3,7 @@ import {Button, Form, Input} from "antd";
 import useInput from "../hooks/useInput";
 import PropTypes from "prop-types";
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_COMMENT_REQUEST, addComment} from "../reducers/post";
+import { ADD_COMMENT_REQUEST } from "../reducers/post";
 const CommentForm = ({ post }) => {
     const dispatch = useDispatch();
 
