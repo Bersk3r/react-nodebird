@@ -8,7 +8,7 @@ import {
     MessageOutlined,
     RetweetOutlined
 } from "@ant-design/icons";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";

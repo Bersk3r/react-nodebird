@@ -1,15 +1,49 @@
 const express = require('express');
+const multer = require('multer'); // multer는 app에 장착할 수 있지만 보통은 라우터마다 장착하는 미들웨어
+const path = require('path'); // node에서 기본 제공
+const fs = require('fs'); // node에서 기본 제공
 
 const { Post, Comment, Image, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
-router.post('/', isLoggedIn, async (req, res, next) => {
+try {
+    fs.accessSync('uploads');
+} catch (error) {
+    console.log('uploads 폴더가 없으므로 생성합니다.');
+    fs.mkdirSync('uploads');
+}
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, done) {
+            done(null, 'uploads');
+        },
+        filename(req,file, done) { // 제로초.png
+            const ext = path.extname(file.originalname); // 확장자 추출(.png)
+            const basename = path.basename(file.originalname, ext); // 제로초
+            done(null, basename + '_' + new Date().getTime() + ext);
+        },
+    }),
+    limits: { filesize: 20 * 1024 * 1024 }, // 20MB (파일 업로드도 공격이 될 수 있음)
+});
+
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     try {
         const post = await Post.create({
             content: req.body.content,
             UserId: req.user.id,
         });
+
+        if (req.body.image) {
+            if(Array.isArray(req.body.image)) { // 이미지를 여러 개 올리면 image: [ 1.jpg, 2.jpg ]
+               const images = await Promise.all(req.body.image.map((image) => Image.create({ src: image })));
+               await post.addImages(images);
+            } else { // 이미지를 한 개만 올린 경우 image: 1.jpg
+                const image = await Image.create({ src: req.body.image });
+                await post.addImages(image);
+            }
+        }
         const fullPost = await Post.findOne({
             where: { id: post.id },
             include: [{
@@ -36,6 +70,15 @@ router.post('/', isLoggedIn, async (req, res, next) => {
         next(error);
     }
 });
+
+// 되도록 이미지나 비디오 같은 멀티파트 파일들은 프론트엔드 단에서 곧바로 클라우드로 올릴 수 있게 하는 게 좋음
+// 한 장만 업로드하게끔하는 경우, upload.single()을 사용하면 됨
+// 이미지는 없고 텍스트인 경우, upload.none()을 사용하면 됨 (이 때 인자는 없어도 됨)
+// 파일 인풋이 두 요소이면, upload.fills()를 사용하면 됨
+router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => { // POST /post/images
+    console.log(req.files);
+    res.json(req.files.map((v) => v.filename ));
+})
 router.post('/:postId/comment',  isLoggedIn, async (req, res, next) => {
     try {
         const post = await Post.findOne({
@@ -63,7 +106,7 @@ router.post('/:postId/comment',  isLoggedIn, async (req, res, next) => {
     }
 });
 
-router.patch(`/:postId/like`, async (req, res, next) => { // PATCH /post/1/like
+router.patch(`/:postId/like`, isLoggedIn, async (req, res, next) => { // PATCH /post/1/like
     try {
         const post = await Post.findOne({ where: { id: req.params.postId }});
         if(!post) {
@@ -77,14 +120,16 @@ router.patch(`/:postId/like`, async (req, res, next) => { // PATCH /post/1/like
     }
 });
 
-router.delete(`/:postId/like`, async (req, res, next) => { // DELETE /post/1/like
+router.delete(`/:postId/like`, isLoggedIn, async (req, res, next) => { // DELETE /post/1/like
     try {
-        const post = await Post.findOne({ where: { id: req.params.postId }});
+        const post = await Post.findOne({
+            where: { id: req.params.postId,}
+        });
         if(!post) {
             return res.status(403).send('존재하지 않는 게시글입니다.');
         }
         await post.removeLikers(req.user.id); // DB 조작시 await 키워드를 앞에 붙일 것
-        res.json({ PostId: post.id, UserId: req.user.id });
+        res.status(200).json({ PostId: post.id, UserId: req.user.id });
     } catch(error) {
         console.error(error);
         next(error);
@@ -93,5 +138,20 @@ router.delete(`/:postId/like`, async (req, res, next) => { // DELETE /post/1/lik
 // router.delete('/', (req, res) => {
 //     res.json({ id: 1 });
 // });
+
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+    try {
+        await Post.destroy({
+            where: {
+                id: req.params.postId,
+                UserId: req.user.id,
+            },
+        })
+        res.json({ PostId: parseInt(req.params.postId, 10) });
+    } catch(error) {
+        console.error(error);
+        next(error);
+    }
+})
 
 module.exports = router;
