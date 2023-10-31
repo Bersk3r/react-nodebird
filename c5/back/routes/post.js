@@ -3,7 +3,7 @@ const multer = require('multer'); // multer는 app에 장착할 수 있지만 �
 const path = require('path'); // node에서 기본 제공
 const fs = require('fs'); // node에서 기본 제공
 
-const { Post, Comment, Image, User } = require('../models');
+const { Post, Comment, Image, User, Hashtag } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -30,10 +30,18 @@ const upload = multer({
 
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     try {
+        const hashtags = req.body.content.match(/#[^\s#]+/g);
         const post = await Post.create({
             content: req.body.content,
             UserId: req.user.id,
         });
+
+        if(hashtags) {
+            const result = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
+                where: { name: tag.slice(1).toLowerCase() },
+             }))); // [[노드, true], [리약트,true]]
+            await post.addHashtags(result.map((v) => v[0]));
+        }
 
         if (req.body.image) {
             if(Array.isArray(req.body.image)) { // 이미지를 여러 개 올리면 image: [ 1.jpg, 2.jpg ]
