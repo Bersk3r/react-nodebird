@@ -22,10 +22,32 @@ import {
     UPLOAD_IMAGES_SUCCESS,
     UPLOAD_IMAGES_FAILURE,
     UPLOAD_IMAGES_REQUEST,
+    RETWEET_FAILURE,
+    RETWEET_REQUEST,
+    RETWEET_SUCCESS,
 } from "../reducers/post";
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
+import {ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 // import shortId from "shortid";
 
+function retweetAPI(data) {
+    return axios.post(`/post/${data}/retweet`);
+}
+
+function* retweet(action) {
+    try {
+        const result = yield call(retweetAPI, action.data);
+        yield put({
+            type: RETWEET_SUCCESS,
+            data: result.data,
+        });
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type: RETWEET_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 function uploadImagesAPI(data) {
     return axios.post('/post/images', data);
 }
@@ -116,13 +138,14 @@ function* addPost(action) {
         });
     }
 }
-function loadPostsAPI(data) {
-    return axios.get('/posts', data);
+function loadPostsAPI(lastId) {
+    // post, patch는 데이터 캐싱이 안되나, get은 데이터 캐싱이 가능함 -> 쿼리스트링으로 데이터를 전달
+    return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
     try {
-        const result = yield call(loadPostsAPI, action.data);
+        const result = yield call(loadPostsAPI, action.lastId);
         // yield delay(1000);
         yield put({
             type: LOAD_POSTS_SUCCESS,
@@ -188,6 +211,10 @@ function* addComment(action) {
 }
 
 
+function* watchRetweet() {
+    yield takeLatest(RETWEET_REQUEST, retweet);
+    // yield throttle('LIKE_POST_REQUEST', addPost, 10000);
+}
 function* watchUploadImages() {
     yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
     // yield throttle('LIKE_POST_REQUEST', addPost, 10000);
@@ -219,6 +246,7 @@ function* watchAddComment() {
 
 export default function* postSaga() {
     yield all([
+        fork(watchRetweet),
         fork(watchUploadImages),
         fork(watchLikePost),
         fork(watchUnlikePost),

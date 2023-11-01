@@ -54,7 +54,7 @@ function* removeFollower(action) {
         });
     }
 }
-function loadMyInfoAPI(data) {
+function loadMyInfoAPI() {
     // return axios.get('/user', {
     //     withCredentials: true
     // });

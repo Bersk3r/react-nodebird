@@ -1,10 +1,12 @@
-import shortId from 'shortid';
 import { produce } from 'immer';
-import faker from 'faker';
+
 export const initialState = {
     mainPosts: [],
     imagePaths: [],
     hasMorePosts: true,
+    retweetLoading: false,
+    retweetDone: false,
+    retweetError: null,
     uploadImageLoading: false,
     uploadImageDone: false,
     uploadImageError: null,
@@ -48,6 +50,10 @@ export const initialState = {
 //     }));
 
 // initialState.mainPost = initialState.mainPosts.concat(generateDummyPost(10));
+
+export const RETWEET_REQUEST = 'RETWEET_REQUEST';
+export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
+export const RETWEET_FAILURE = 'RETWEET_FAILURE';
 export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
 export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
 export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
@@ -107,6 +113,23 @@ export const addComment = (data) => ({
 // 리듀서는 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수 -> 불변성 유지
 const reducer = (state = initialState, action) => produce(state, (draft)=> {
         switch (action.type) {
+            case RETWEET_REQUEST:
+                draft.retweetLoading = true;
+                draft.retweetError = null;
+                draft.retweetDone = false;
+                break;
+
+            case RETWEET_SUCCESS:
+                draft.retweetLoading = false;
+                draft.retweetDone = true;
+                draft.mainPosts.unshift(action.data);
+                break;
+
+            case RETWEET_FAILURE:
+                draft.retweetLoading = false;
+                draft.retweetError = action.error;
+                break;
+
             case REMOVE_IMAGE:
                 draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
                 break;
@@ -165,8 +188,10 @@ const reducer = (state = initialState, action) => produce(state, (draft)=> {
             case LOAD_POSTS_SUCCESS:
                 draft.loadPostsLoading = false;
                 draft.loadPostsDone = true;
-                draft.mainPosts = action.data.concat(draft.mainPosts);
-                draft.hasMorePosts = draft.mainPosts.length < 50;
+                // draft.mainPosts = action.data.concat(draft.mainPosts);
+                draft.mainPosts = draft.mainPosts.concat(action.data);
+                // draft.hasMorePosts = draft.mainPosts.length < 50;
+                draft.hasMorePosts = action.data.length === 10;
                 break;
             case LOAD_POSTS_FAILURE:
                 draft.loadPostsLoading = false;
