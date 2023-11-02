@@ -30,7 +30,10 @@ import {
     LOAD_FOLLOWINGS_SUCCESS,
     REMOVE_FOLLOWER_REQUEST,
     REMOVE_FOLLOWER_SUCCESS,
-    REMOVE_FOLLOWER_FAILURE
+    REMOVE_FOLLOWER_FAILURE,
+    LOAD_USER_SUCCESS,
+    LOAD_USER_FAILURE,
+    LOAD_USER_REQUEST,
 } from "../reducers/user";
 
 function removeFollowerAPI(data) {
@@ -65,7 +68,7 @@ function loadMyInfoAPI() {
 // l.next();
 function* loadMyInfo(action) {
     try {
-        const result = yield call(loadMyInfoAPI, action.data);
+        const result = yield call(loadMyInfoAPI);
         // console.log(result);
         // yield delay(1000);
         yield put({
@@ -76,6 +79,32 @@ function* loadMyInfo(action) {
     } catch (err) {
         yield put({
             type: LOAD_MY_INFO_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
+function loadUserAPI(data) {
+    // return axios.get('/user', {
+    //     withCredentials: true
+    // });
+    return axios.get(`/user/${data}`);
+}
+
+// const l = logIn({ type: 'LOG_IN_REQUEST', data: { id: 'zerocho@gmail.com'}});
+// l.next();
+function* loadUser(action) {
+    try {
+        const result = yield call(loadUserAPI, action.data);
+        // console.log(result);
+        // yield delay(1000);
+        yield put({
+            type: LOAD_USER_SUCCESS,
+            // data: result.data
+            data: result.data,
+        });
+    } catch (err) {
+        yield put({
+            type: LOAD_USER_FAILURE,
             error: err.response.data,
         });
     }
@@ -268,6 +297,10 @@ function* watchLoadMyInfo() {
     // yield take('LOG_IN', logIn);
     yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
+function* watchLoadUser() {
+    // yield take('LOG_IN', logIn);
+    yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
 function* watchLoadFollowings() {
     // yield take('LOG_IN', logIn);
     yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
@@ -306,6 +339,7 @@ export default function* userSaga() {
     yield all([
         fork(watchRemoveFollower),
         fork(watchLoadMyInfo),
+        fork(watchLoadUser),
         fork(watchLoadFollowings),
         fork(watchLoadFollowers),
         fork(watchLogIn),
