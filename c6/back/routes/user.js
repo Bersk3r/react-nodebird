@@ -7,7 +7,7 @@ const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
-    console.log(req.headers);
+    // console.log(req.headers);
     try {
        if(req.user) {
            const fullUserWithoutPassword = await User.findOne({
@@ -32,6 +32,41 @@ router.get('/', async (req, res, next) => {
            res.status(200).json(fullUserWithoutPassword);
        } else {
            res.status(200).json(null);
+       }
+   } catch(error) {
+       console.error(error);
+       next(error);
+   }
+});
+router.get('/:userId', async (req, res, next) => { // GET /user/1
+    try {
+        const fullUserWithoutPassword = await User.findOne({
+            where: { id: req.params.userId },
+            // attributes: ['id', 'nickname', 'email'],
+            attributes: {
+                exclude: [ 'password' ],
+            },
+            include: [{
+                model: Post,
+                attributes: ['id'],
+            }, {
+                model: User,
+                as: 'Followings',
+                attributes: ['id'],
+            }, {
+                model: User,
+                as: 'Followers',
+                attributes: ['id'],
+            },]
+        })
+       if(fullUserWithoutPassword) {
+           const data =  fullUserWithoutPassword.toJSON(); // 쓸 수 있는 데이터인 JSOn으로 바꿔야함 (Sequelize에서 제공하는 데이터는 JSON이 아님)
+           data.Posts = data.Posts.length; // 개인정보 침해 방지 목적
+           data.Followers = data.Followers.length;
+           data.Followings = data.Followings.length;
+           res.status(200).json(data);
+       } else {
+           res.status(404).json('존재하지 않는 사용자입니다.');
        }
    } catch(error) {
        console.error(error);
