@@ -24,7 +24,7 @@ import {
     UPLOAD_IMAGES_REQUEST,
     RETWEET_FAILURE,
     RETWEET_REQUEST,
-    RETWEET_SUCCESS,
+    RETWEET_SUCCESS, LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE,
 } from "../reducers/post";
 import {ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 // import shortId from "shortid";
@@ -138,6 +138,28 @@ function* addPost(action) {
         });
     }
 }
+function loadPostAPI(data) {
+    // post, patch는 데이터 캐싱이 안되나, get은 데이터 캐싱이 가능함 -> 쿼리스트링으로 데이터를 전달
+    return axios.get(`/post/${data}`);
+}
+
+function* loadPost(action) {
+    try {
+        const result = yield call(loadPostAPI, action.data);
+        // yield delay(1000);
+        yield put({
+            type: LOAD_POST_SUCCESS,
+            // data: result.data
+            data: result.data,
+        });
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type: LOAD_POST_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 function loadPostsAPI(lastId) {
     // post, patch는 데이터 캐싱이 안되나, get은 데이터 캐싱이 가능함 -> 쿼리스트링으로 데이터를 전달
     return axios.get(`/posts?lastId=${lastId || 0}`);
@@ -231,6 +253,10 @@ function* watchAddPost() {
     yield takeLatest(ADD_POST_REQUEST, addPost);
     // yield throttle('ADD_POST_REQUEST', addPost, 10000);
 }
+function* watchLoadPost() {
+    yield throttle(5000, LOAD_POST_REQUEST, loadPost);
+    // yield throttle('ADD_POST_REQUEST', addPost, 10000);
+}
 function* watchLoadPosts() {
     yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
     // yield throttle('ADD_POST_REQUEST', addPost, 10000);
@@ -251,6 +277,7 @@ export default function* postSaga() {
         fork(watchLikePost),
         fork(watchUnlikePost),
         fork(watchAddPost),
+        fork(watchLoadPost),
         fork(watchLoadPosts),
         fork(watchRemovePost),
         fork(watchAddComment),
