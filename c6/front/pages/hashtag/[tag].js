@@ -14,12 +14,12 @@ const Hashtag = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const { tag } = router.query;
-    const { mainPosts, hasMorePosts, loadHashtagPostsLoading } = useSelector((state) => state.post);
+    const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
 
     useEffect(() => {
         const onScroll = () => {
             if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-                if (hasMorePosts && !loadHashtagPostsLoading) {
+                if (hasMorePosts && !loadPostsLoading) {
                     dispatch({
                         type: LOAD_HASHTAG_POSTS_REQUEST,
                         lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
@@ -32,7 +32,7 @@ const Hashtag = () => {
         return () => {
             window.removeEventListener('scroll', onScroll);
         };
-    }, [mainPosts.length, hasMorePosts, tag]);
+    }, [mainPosts.length, hasMorePosts, tag, loadPostsLoading]);
 
     return (
         <AppLayout>

@@ -1,8 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { User, Post } = require('../models');
+const { User, Post, Comment, Image} = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const {Op} = require("sequelize");
 
 const router = express.Router();
 
@@ -73,6 +74,55 @@ router.get('/:userId', async (req, res, next) => { // GET /user/1
        next(error);
    }
 });
+
+router.get('/:userId/posts', async (req, res, next) => { // GET /posts
+    try {
+        const where = { userId: req.params.userId };
+        if (parseInt(req.query.lastId,10)) { // 초기 로딩이 아닐 때
+            where.id = { [Op.lt] : parseInt(req.query.lastId, 10) }
+        }
+        const posts = await Post.findAll({
+            where,
+            // where: { id: lastId },
+            limit: 10,
+            // offset: 0, // 추가 및 삭제 시 오류가 많아, lastId를 많이 사용함
+            order: [
+                ['createdAt', 'DESC'],
+                [Comment, 'createdAt', 'DESC'],
+            ],
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname'],
+            }, {
+                model: Image,
+            }, {
+                model: Comment,
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }]
+            }, {
+                model: User, // 좋아요 누른 사람
+                as: 'Likers',
+                attributes: [ 'id' ],
+            },{
+                model: Post,
+                as: 'Retweet',
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }, {
+                    model: Image,
+                }]
+            }],
+        });
+        // console.log(posts);
+        res.status(200).json(posts);
+    } catch(error) {
+        console.error(error);
+        next(error);
+    }
+})
 router.post('/login', isNotLoggedIn, (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err) {

@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        // UserId: {}
+        // : {}
         // PostId: {}
     }, {
         charset: 'utf8mb4',

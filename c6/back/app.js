@@ -11,6 +11,7 @@ const path = require('path');
 const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
 const userRouter = require('./routes/user');
+const hashtagRouter = require('./routes/hashtag');
 
 const db = require('./models');
 const passportConfig = require('./passport');
@@ -65,6 +66,7 @@ app.use(passport.session());
 app.use('/post',postRouter);
 app.use('/posts',postsRouter);
 app.use('/user',userRouter);
+app.use('/hashtag',hashtagRouter);
 
 // 에러 처리 미들웨어는 여기에 내부적 존재
 

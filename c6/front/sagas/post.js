@@ -24,7 +24,16 @@ import {
     UPLOAD_IMAGES_REQUEST,
     RETWEET_FAILURE,
     RETWEET_REQUEST,
-    RETWEET_SUCCESS, LOAD_POST_REQUEST, LOAD_POST_SUCCESS, LOAD_POST_FAILURE,
+    RETWEET_SUCCESS,
+    LOAD_POST_REQUEST,
+    LOAD_POST_SUCCESS,
+    LOAD_POST_FAILURE,
+    LOAD_USER_POSTS_REQUEST,
+    LOAD_HASHTAG_POSTS_REQUEST,
+    LOAD_USER_POSTS_SUCCESS,
+    LOAD_USER_POSTS_FAILURE,
+    LOAD_HASHTAG_POSTS_SUCCESS,
+    LOAD_HASHTAG_POSTS_FAILURE,
 } from "../reducers/post";
 import {ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 // import shortId from "shortid";
@@ -160,6 +169,50 @@ function* loadPost(action) {
         });
     }
 }
+function loadUserPostsAPI(data, lastId) {
+    // post, patch는 데이터 캐싱이 안되나, get은 데이터 캐싱이 가능함 -> 쿼리스트링으로 데이터를 전달
+    return axios.get(`/user/${data}/posts?lastId=${lastId || 0}`);
+}
+
+function* loadUserPosts(action) {
+    try {
+        const result = yield call(loadUserPostsAPI, action.data, action.lastId);
+        // yield delay(1000);
+        yield put({
+            type: LOAD_USER_POSTS_SUCCESS,
+            // data: result.data
+            data: result.data,
+        });
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type: LOAD_USER_POSTS_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
+function loadHashtagPostsAPI(data, lastId) {
+    // post, patch는 데이터 캐싱이 안되나, get은 데이터 캐싱이 가능함 -> 쿼리스트링으로 데이터를 전달
+    return axios.get(`/hashtag/${encodeURIComponent(data)}?lastId=${lastId || 0}`);
+}
+
+function* loadHashtagPosts(action) {
+    try {
+        const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
+        // yield delay(1000);
+        yield put({
+            type: LOAD_HASHTAG_POSTS_SUCCESS,
+            // data: result.data
+            data: result.data,
+        });
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type: LOAD_HASHTAG_POSTS_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 function loadPostsAPI(lastId) {
     // post, patch는 데이터 캐싱이 안되나, get은 데이터 캐싱이 가능함 -> 쿼리스트링으로 데이터를 전달
     return axios.get(`/posts?lastId=${lastId || 0}`);
@@ -257,6 +310,14 @@ function* watchLoadPost() {
     yield throttle(5000, LOAD_POST_REQUEST, loadPost);
     // yield throttle('ADD_POST_REQUEST', addPost, 10000);
 }
+function* watchLoadUserPosts() {
+    yield throttle(5000, LOAD_USER_POSTS_REQUEST, loadUserPosts);
+    // yield throttle('ADD_POST_REQUEST', addPost, 10000);
+}
+function* watchLoadHashtagPosts() {
+    yield throttle(5000, LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
+    // yield throttle('ADD_POST_REQUEST', addPost, 10000);
+}
 function* watchLoadPosts() {
     yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
     // yield throttle('ADD_POST_REQUEST', addPost, 10000);
@@ -278,6 +339,8 @@ export default function* postSaga() {
         fork(watchUnlikePost),
         fork(watchAddPost),
         fork(watchLoadPost),
+        fork(watchLoadUserPosts),
+        fork(watchLoadHashtagPosts),
         fork(watchLoadPosts),
         fork(watchRemovePost),
         fork(watchAddComment),
