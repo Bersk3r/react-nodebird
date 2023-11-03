@@ -30,13 +30,15 @@ export default class MyDocument extends Document {
         }
     }
     render() {
-        <Html>
-            <Head />
-            <body>
-            <script src="https://polyfill.io/v3/polyfill.min.js?features=default%2Cdom4%2Ces2015%2Ces2016%2Ces2017%2Ces2018%2Ces2019%2Ces2020%2Ces2021%2Ces2022" />
-            <Main />
+        return (
+            <Html>
+                <Head />
+                <body>
+                <script src="https://polyfill.io/v3/polyfill.min.js?features=default%2Cdom4%2Ces2015%2Ces2016%2Ces2017%2Ces2018%2Ces2019%2Ces2020%2Ces2021%2Ces2022" />
+                <Main />
                 <NextScript />
-            </body>
-        </Html>
+                </body>
+            </Html>
+        )
     }
 }

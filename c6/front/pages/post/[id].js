@@ -58,7 +58,8 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
 // getStaticPath 예시
 // getStaticProps랑 같이 사용함
 // 다이나믹 라우팅일 때 사용함
-// 페이지 갯수에 제한이 있는 경우에 사용
+// 페이지 갯수에 제한이 있는 경우나 HTML로 만들어도 되는 경우에 사용
+// 사용하면 서빙 속도가 빨라질 수 있음
 
 // async function getStaticPaths() {
 //     // const result = await axios.get('/post/list');
