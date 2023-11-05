@@ -1,4 +1,5 @@
-import { produce } from 'immer';
+// import { produce } from 'immer';
+import produce from '../util/produce';
 
 export const initialState = {
     loadMyInfoLoading: false, // 내 정보 로드 시도중

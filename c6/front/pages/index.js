@@ -9,6 +9,7 @@ import {LOAD_MY_INFO_REQUEST} from "../reducers/user";
 import wrapper from "../store/configureStore";
 import axios from "axios";
 // import {func} from "prop-types";
+// const Home = ({data}) => {
 const Home = () => {
     const dispatch = useDispatch();
     const { me } = useSelector((state) => state.user);
@@ -62,5 +63,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     });
     context.store.dispatch(END);
     await context.store.sagaTask.toPromise();
+    // return { props: { data: 123 } }; // SWR도 SSR 가능
 });
 export default Home;
