@@ -7,6 +7,8 @@ const passport = require('passport');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
+const hpp = require('hpp');
+const helmet = require('helmet');
 
 const postRouter = require('./routes/post');
 const postsRouter = require('./routes/posts');
@@ -28,18 +30,26 @@ db.sequelize.sync()
 
 passportConfig();
 
-app.use(morgan('dev'));
-app.use(
-    cors({
-        origin: true,
-        // origin: 'http://localhost:3060',
-        credentials: true,
-    })
-);
-// app.use(cors({
-//     origin: 'https://nodebird.com',
-//     origin: true,
-// }));
+if(process.env.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+    app.use(hpp());
+    app.use(helmet());
+} else {
+    app.use(morgan('dev'));
+}
+
+
+// app.use(
+//     cors({
+//         origin: true,
+//         // origin: 'http://localhost:3060',
+//         credentials: true,
+//     })
+// );
+app.use(cors({
+    origin: ['http://localhost:8080', 'https://nodebird.com'],
+    credentials: true,
+}));
 app.use('/', express.static(path.join(__dirname, 'uploads')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -75,7 +85,7 @@ app.use('/hashtag',hashtagRouter);
 //
 // })
 
-app.listen(3065, () => {
+app.listen(8080, () => {
     console.log('서버 실행 중!');
 });
 
