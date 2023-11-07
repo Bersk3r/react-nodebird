@@ -10,6 +10,7 @@ import wrapper from "../store/configureStore";
 import axios from "axios";
 import {END} from "redux-saga";
 import useSWR from 'swr';
+import {backUrl} from "../config/config";
 
 const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
 // 주소를 가져올 방법을 정의한 함수
@@ -19,8 +20,8 @@ const Profile = () => {
     const [ followersLimit, setFollowersLimit ] = useState(3);
     const [ followingsLimit, setFollowingsLimit ] = useState(3);
 
-    const { data: followingsData, error: followingError } = useSWR(`http://localhost:3065/user/followings?limit=${followingsLimit}`, fetcher); // fetcher 대신 graphql도 사용 가능, 둘 다 없으면 로딩 중
-    const { data: followersData, error: followerError } = useSWR(`http://localhost:3065/user/followers?limit=${followersLimit}`, fetcher); // fetcher 대신 graphql도 사용 가능, 둘 다 없으면 로딩 중
+    const { data: followingsData, error: followingError } = useSWR(`${backUrl}/user/followings?limit=${followingsLimit}`, fetcher); // fetcher 대신 graphql도 사용 가능, 둘 다 없으면 로딩 중
+    const { data: followersData, error: followerError } = useSWR(`${backUrl}/user/followers?limit=${followersLimit}`, fetcher); // fetcher 대신 graphql도 사용 가능, 둘 다 없으면 로딩 중
 
 
     useEffect(() => {
