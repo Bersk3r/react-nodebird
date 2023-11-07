@@ -62,9 +62,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.get('/',(req, res) => {
-//     res.send('hello express');
-// });
+app.get('/',(req, res) => {
+    res.send('hello express');
+});
 // app.get('/post', (req, res) => {
 //     res.json([
 //         { id: 1, content: 'hello' },
