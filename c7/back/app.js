@@ -47,7 +47,7 @@ if(process.env.NODE_ENV === 'production') {
 //     })
 // );
 app.use(cors({
-    origin: ['http://localhost:8080', 'https://nodebird.com'],
+    origin: ['http://localhost', 'https://nodebird.com', 'http://192.168.208.130/'],
     credentials: true,
 }));
 app.use('/', express.static(path.join(__dirname, 'uploads')))
@@ -85,7 +85,7 @@ app.use('/hashtag',hashtagRouter);
 //
 // })
 
-app.listen(8081, () => {
+app.listen(80, () => {
     console.log('서버 실행 중!');
 });
 
