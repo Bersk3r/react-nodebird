@@ -47,7 +47,7 @@ if(process.env.NODE_ENV === 'production') {
 //     })
 // );
 app.use(cors({
-    origin: ['http://localhost', 'https://nodebird.com', 'http://192.168.208.130/'],
+    origin: ['http://localhost', 'https://nodebird.com', 'http://192.168.208.131/'],
     credentials: true,
 }));
 app.use('/', express.static(path.join(__dirname, 'uploads')))
