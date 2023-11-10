@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer'); // multer는 app에 장착할 수 있지만 보통은 라우터마다 장착하는 미들웨어
 const path = require('path'); // node에서 기본 제공
 const fs = require('fs'); // node에서 기본 제공
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 
 const { Post, Comment, Image, User, Hashtag } = require('../models');
 const { isLoggedIn } = require('./middlewares');
@@ -14,16 +16,32 @@ try {
     fs.mkdirSync('uploads');
 }
 
+AWS.config.update({
+    accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    region: 'ap-northeast-2',
+});
+
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination(req, file, done) {
+//             done(null, 'uploads');
+//         },
+//         filename(req,file, done) { // 제로초.png
+//             const ext = path.extname(file.originalname); // 확장자 추출(.png)
+//             const basename = path.basename(file.originalname, ext); // 제로초
+//             done(null, basename + '_' + new Date().getTime() + ext);
+//         },
+//     }),
+//     limits: { filesize: 20 * 1024 * 1024 }, // 20MB (파일 업로드도 공격이 될 수 있음)
+// });
 const upload = multer({
-    storage: multer.diskStorage({
-        destination(req, file, done) {
-            done(null, 'uploads');
-        },
-        filename(req,file, done) { // 제로초.png
-            const ext = path.extname(file.originalname); // 확장자 추출(.png)
-            const basename = path.basename(file.originalname, ext); // 제로초
-            done(null, basename + '_' + new Date().getTime() + ext);
-        },
+    storage: multerS3({
+        s3: new AWS.S3(),
+        bucket: 'react-nodebird-s3',
+        key(req, file, cb) {
+            cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`)
+        }
     }),
     limits: { filesize: 20 * 1024 * 1024 }, // 20MB (파일 업로드도 공격이 될 수 있음)
 });
@@ -85,7 +103,8 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 // 파일 인풋이 두 요소이면, upload.fills()를 사용하면 됨
 router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => { // POST /post/images
     console.log(req.files);
-    res.json(req.files.map((v) => v.filename ));
+    // res.json(req.files.map((v) => v.filename ));
+    res.json(req.files.map((v) => v.location ));
 })
 router.post('/:postId/comment',  isLoggedIn, async (req, res, next) => {
     try {
