@@ -47,7 +47,8 @@ if(process.env.NODE_ENV === 'production') {
 //     })
 // );
 app.use(cors({
-    origin: 'http://192.168.208.131/',
+    // origin: 'http://192.168.208.131/',
+    origin: true,
     credentials: true,
 }));
 app.use('/', express.static(path.join(__dirname, 'uploads')))
