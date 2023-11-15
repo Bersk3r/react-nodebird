@@ -35,7 +35,7 @@ if(process.env.NODE_ENV === 'production') {
     app.use(hpp());
     app.use(helmet());
     app.use(cors({
-        origin: 'http://mkbird.net',
+        origin: 'https://mkbird.net',
         credentials: true,
     }));
 } else {
