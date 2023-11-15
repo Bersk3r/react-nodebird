@@ -21,7 +21,7 @@ const { Model } = DataTypes;
 module.exports = class Hashtag extends Model {
     static init(sequelize) {
         return super.init({
-            content : {
+            name : {
                 type: DataTypes.STRING(20),
                 allowNull: false,
             },
