@@ -25,7 +25,7 @@ import { combineReducers } from "redux";
 const rootReducer = (state, action) => { // rootReducer를 전체 덮어씌우기 위해 reducer 구조를 변경
     switch (action.type) {
         case HYDRATE:
-            console.log('HYDRATE', action);
+            // console.log('HYDRATE', action);
             return action.payload;
         default: {
             const combinedReducers = combineReducers({
