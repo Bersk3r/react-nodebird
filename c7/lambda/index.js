@@ -3,7 +3,7 @@ const sharp = require('sharp');
 
 const s3 = new AWS.S3();
 
-index.handler = async (event, context, callback) => {
+exports.handler = async (event, context, callback) => {
     const Bucket = event.Records[0].s3.bucket.name; // react-nodebird-kiscwook
     const Key = decodeURIComponent(event.Records[0].s3.object.key); // orginal/abc.png
     console.log(Bucket, Key);
