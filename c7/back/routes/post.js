@@ -273,6 +273,7 @@ router.delete(`/:postId/like`, isLoggedIn, async (req, res, next) => { // DELETE
 // });
 
 router.patch('/:postId', isLoggedIn, async (req, res, next) => {
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
     try {
         await Post.update({
             content: req.body.content,
@@ -281,7 +282,14 @@ router.patch('/:postId', isLoggedIn, async (req, res, next) => {
                 id: req.params.postId,
                 UserId: req.user.id,
             },
-        })
+        });
+        const post = await Post.findOne({ where: { id: req.params.postId }});
+        if(hashtags) {
+            const result = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
+                where: { name: tag.slice(1).toLowerCase() },
+            }))); // [[노드, true], [리약트,true]]
+            await post.setHashtags(result.map((v) => v[0]));
+        }
         res.json({ PostId: parseInt(req.params.postId, 10), content: req.body.content });
     } catch(error) {
         console.error(error);
